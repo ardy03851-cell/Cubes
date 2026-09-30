@@ -2,383 +2,381 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <title>Audio.JSON — Synthesis Engine</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
-        rel="stylesheet">
-    <style>
-        :root {
-            color-scheme: dark;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Audio.JSON — Synthesis Engine</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      color-scheme: dark;
+    }
 
-        html,
-        body {
-            min-height: 100%;
-        }
+    html,
+    body {
+      min-height: 100%;
+    }
 
-        body {
-            font-family: 'Inter', system-ui, sans-serif;
-            background-color: #08080a;
-            background-image: radial-gradient(ellipse 90% 55% at 50% -25%, rgba(99, 102, 241, .10), transparent 70%);
-            color: #f4f4f5;
-            -webkit-font-smoothing: antialiased;
-        }
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background-color: #08080a;
+      background-image: radial-gradient(ellipse 90% 55% at 50% -25%, rgba(99, 102, 241, .10), transparent 70%);
+      color: #f4f4f5;
+      -webkit-font-smoothing: antialiased;
+    }
 
-        .mono {
-            font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
-        }
+    .mono {
+      font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+    }
 
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
 
-        ::-webkit-scrollbar-track {
-            background: transparent;
-        }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
 
-        ::-webkit-scrollbar-thumb {
-            background: #27272a;
-            border-radius: 4px;
-            border: 2px solid transparent;
-            background-clip: content-box;
-        }
+    ::-webkit-scrollbar-thumb {
+      background: #27272a;
+      border-radius: 4px;
+      border: 2px solid transparent;
+      background-clip: content-box;
+    }
 
-        ::-webkit-scrollbar-thumb:hover {
-            background: #3f3f46;
-            background-clip: content-box;
-        }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #3f3f46;
+      background-clip: content-box;
+    }
 
-        input[type=range] {
-            -webkit-appearance: none;
-            appearance: none;
-            background: transparent;
-        }
+    input[type=range] {
+      -webkit-appearance: none;
+      appearance: none;
+      background: transparent;
+    }
 
-        input[type=range]::-webkit-slider-runnable-track {
-            height: 4px;
-            background: #27272a;
-            border-radius: 999px;
-        }
+    input[type=range]::-webkit-slider-runnable-track {
+      height: 4px;
+      background: #27272a;
+      border-radius: 999px;
+    }
 
-        input[type=range]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 13px;
-            height: 13px;
-            margin-top: -4.5px;
-            border-radius: 999px;
-            background: #6366f1;
-            cursor: pointer;
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, .16);
-        }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 13px;
+      height: 13px;
+      margin-top: -4.5px;
+      border-radius: 999px;
+      background: #6366f1;
+      cursor: pointer;
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, .16);
+    }
 
-        input[type=range]::-moz-range-track {
-            height: 4px;
-            background: #27272a;
-            border-radius: 999px;
-        }
+    input[type=range]::-moz-range-track {
+      height: 4px;
+      background: #27272a;
+      border-radius: 999px;
+    }
 
-        input[type=range]::-moz-range-thumb {
-            width: 13px;
-            height: 13px;
-            border: none;
-            border-radius: 999px;
-            background: #6366f1;
-            cursor: pointer;
-        }
+    input[type=range]::-moz-range-thumb {
+      width: 13px;
+      height: 13px;
+      border: none;
+      border-radius: 999px;
+      background: #6366f1;
+      cursor: pointer;
+    }
 
-        .card {
-            background: linear-gradient(180deg, rgba(24, 24, 27, .72), rgba(17, 17, 19, .72));
-            border: 1px solid rgba(63, 63, 70, .5);
-            border-radius: 14px;
-        }
+    .card {
+      background: linear-gradient(180deg, rgba(24, 24, 27, .72), rgba(17, 17, 19, .72));
+      border: 1px solid rgba(63, 63, 70, .5);
+      border-radius: 14px;
+    }
 
-        .drag-over {
-            border-color: #6366f1 !important;
-            background: rgba(99, 102, 241, .07) !important;
-        }
+    .drag-over {
+      border-color: #6366f1 !important;
+      background: rgba(99, 102, 241, .07) !important;
+    }
 
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            gap: .375rem;
-            font-size: 12px;
-            font-weight: 500;
-            border-radius: 8px;
-            padding: .4rem .7rem;
-            transition: all .15s ease;
-            border: 1px solid rgba(63, 63, 70, .7);
-            background: #1c1c1f;
-            color: #d4d4d8;
-        }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: .375rem;
+      font-size: 12px;
+      font-weight: 500;
+      border-radius: 8px;
+      padding: .4rem .7rem;
+      transition: all .15s ease;
+      border: 1px solid rgba(63, 63, 70, .7);
+      background: #1c1c1f;
+      color: #d4d4d8;
+    }
 
-        .btn:hover:not(:disabled) {
-            background: #27272a;
-            border-color: rgba(82, 82, 91, .9);
-            color: #fafafa;
-        }
+    .btn:hover:not(:disabled) {
+      background: #27272a;
+      border-color: rgba(82, 82, 91, .9);
+      color: #fafafa;
+    }
 
-        .btn:disabled {
-            opacity: .38;
-            cursor: not-allowed;
-        }
+    .btn:disabled {
+      opacity: .38;
+      cursor: not-allowed;
+    }
 
-        .btn-primary {
-            background: #4f46e5;
-            border-color: #4f46e5;
-            color: #fff;
-            box-shadow: 0 4px 14px -4px rgba(79, 70, 229, .5);
-        }
+    .btn-primary {
+      background: #4f46e5;
+      border-color: #4f46e5;
+      color: #fff;
+      box-shadow: 0 4px 14px -4px rgba(79, 70, 229, .5);
+    }
 
-        .btn-primary:hover:not(:disabled) {
-            background: #6366f1;
-            border-color: #6366f1;
-            color: #fff;
-        }
+    .btn-primary:hover:not(:disabled) {
+      background: #6366f1;
+      border-color: #6366f1;
+      color: #fff;
+    }
 
-        .btn-ghost {
-            background: transparent;
-            border-color: transparent;
-            color: #a1a1aa;
-        }
+    .btn-ghost {
+      background: transparent;
+      border-color: transparent;
+      color: #a1a1aa;
+    }
 
-        .btn-ghost:hover:not(:disabled) {
-            background: #1c1c1f;
-            color: #e4e4e7;
-        }
+    .btn-ghost:hover:not(:disabled) {
+      background: #1c1c1f;
+      color: #e4e4e7;
+    }
 
-        .tab {
-            font-size: 11.5px;
-            font-weight: 500;
-            padding: .35rem .7rem;
-            border-radius: 7px;
-            color: #71717a;
-            transition: all .15s;
-        }
+    .tab {
+      font-size: 11.5px;
+      font-weight: 500;
+      padding: .35rem .7rem;
+      border-radius: 7px;
+      color: #71717a;
+      transition: all .15s;
+    }
 
-        .tab:hover {
-            color: #d4d4d8;
-        }
+    .tab:hover {
+      color: #d4d4d8;
+    }
 
-        .tab.active {
-            background: #27272a;
-            color: #f4f4f5;
-        }
+    .tab.active {
+      background: #27272a;
+      color: #f4f4f5;
+    }
 
-        textarea {
-            tab-size: 2;
-        }
+    textarea {
+      tab-size: 2;
+    }
 
-        .kbd {
-            font-size: 10px;
-            padding: 1px 5px;
-            border-radius: 4px;
-            border: 1px solid #3f3f46;
-            background: #18181b;
-            color: #a1a1aa;
-        }
+    .kbd {
+      font-size: 10px;
+      padding: 1px 5px;
+      border-radius: 4px;
+      border: 1px solid #3f3f46;
+      background: #18181b;
+      color: #a1a1aa;
+    }
 
-        .doc-code {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 11px;
-            background: #0d0d10;
-            border: 1px solid rgba(63, 63, 70, .45);
-            border-radius: 8px;
-            padding: .6rem .75rem;
-            color: #a5b4fc;
-            white-space: pre-wrap;
-            word-break: break-word;
-        }
-    </style>
+    .doc-code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      background: #0d0d10;
+      border: 1px solid rgba(63, 63, 70, .45);
+      border-radius: 8px;
+      padding: .6rem .75rem;
+      color: #a5b4fc;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+  </style>
 </head>
 
 <body>
 
-    <div class="mx-auto flex min-h-screen w-full max-w-[1480px] flex-col px-4 py-5 md:px-8 md:py-7">
+  <div class="mx-auto flex min-h-screen w-full max-w-[1480px] flex-col px-4 py-5 md:px-8 md:py-7">
 
-        <!-- ══════════ HEADER ══════════ -->
-        <header class="mb-5 flex flex-wrap items-center justify-between gap-4 border-b border-zinc-800/70 pb-4">
-            <div class="flex items-center gap-3">
-                <div
-                    class="flex h-9 w-9 items-center justify-center rounded-lg bg-indigo-600 shadow-lg shadow-indigo-600/25">
-                    <svg class="h-4.5 w-4.5" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"
-                        viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12 0c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
-                    </svg>
-                </div>
-                <div>
-                    <h1 class="text-[15px] font-semibold leading-tight tracking-tight text-zinc-100">
-                        Audio.JSON <span class="font-normal text-zinc-500">Engine</span>
-                    </h1>
-                    <p class="text-[11px] leading-tight text-zinc-500">Declarative score → Web Audio synthesis</p>
-                </div>
-            </div>
+    <!-- ══════════ HEADER ══════════ -->
+    <header class="mb-5 flex flex-wrap items-center justify-between gap-4 border-b border-zinc-800/70 pb-4">
+      <div class="flex items-center gap-3">
+        <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-indigo-600 shadow-lg shadow-indigo-600/25">
+          <svg class="h-4.5 w-4.5" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"
+            viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12 0c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-[15px] font-semibold leading-tight tracking-tight text-zinc-100">
+            Audio.JSON <span class="font-normal text-zinc-500">Engine</span>
+          </h1>
+          <p class="text-[11px] leading-tight text-zinc-500">Declarative score → Web Audio synthesis</p>
+        </div>
+      </div>
 
-            <div class="flex flex-wrap items-center gap-2">
-                <button id="btnSample" class="btn">
+      <div class="flex flex-wrap items-center gap-2">
+        <button id="btnSample" class="btn">
         <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12 0c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2z"/></svg>
         Load Sample
       </button>
-                <button id="btnUpload" class="btn">
+        <button id="btnUpload" class="btn">
         <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
         Upload
       </button>
-                <div id="statusBadge"
-                    class="flex items-center gap-2 rounded-full border border-zinc-800 bg-zinc-900/80 px-3 py-1.5">
-                    <span id="statusDot" class="h-1.5 w-1.5 rounded-full bg-zinc-500"></span>
-                    <span id="statusText" class="mono text-[10.5px] uppercase tracking-wider text-zinc-400">Idle</span>
-                </div>
+        <button id="btnExport" class="btn">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+        Export
+      </button>
+        <div id="statusBadge"
+          class="flex items-center gap-2 rounded-full border border-zinc-800 bg-zinc-900/80 px-3 py-1.5">
+          <span id="statusDot" class="h-1.5 w-1.5 rounded-full bg-zinc-500"></span>
+          <span id="statusText" class="mono text-[10.5px] uppercase tracking-wider text-zinc-400">Idle</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- ══════════ MAIN ══════════ -->
+    <main class="grid flex-1 grid-cols-1 gap-5 lg:grid-cols-12">
+
+      <!-- ───── LEFT: workspace ───── -->
+      <section class="flex flex-col gap-5 lg:col-span-7">
+
+        <!-- Dropzone -->
+        <div id="dropzone"
+          class="card group flex cursor-pointer items-center gap-3 px-4 py-3 transition hover:border-zinc-600">
+          <div
+            class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-zinc-800/70 text-zinc-400 transition group-hover:text-indigo-400">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+            </svg>
+          </div>
+          <div class="min-w-0 flex-1">
+            <p class="text-[13px] font-medium text-zinc-200">Drop a
+              <span class="mono text-indigo-400">.json</span> score here
+            </p>
+            <p class="truncate text-[11px] text-zinc-500">or click to browse — you can also paste and edit
+              directly in the panel →</p>
+          </div>
+          <span class="mono hidden text-[10px] uppercase tracking-widest text-zinc-600 sm:inline">drag &amp; drop</span>
+          <input type="file" id="fileInput" accept=".json,.txt,application/json,text/plain" class="hidden" />
+        </div>
+
+        <!-- Signal monitor -->
+        <div class="card p-4">
+          <div class="mb-3 flex items-center justify-between">
+            <span class="mono text-[10px] uppercase tracking-[0.18em] text-zinc-500">Signal Monitor</span>
+            <span id="monitorInfo" class="mono text-[11px] text-zinc-500">idle</span>
+          </div>
+          <canvas id="scope"
+            class="block h-36 w-full rounded-lg border border-zinc-800/60 bg-[#0a0a0c] md:h-40"></canvas>
+        </div>
+
+        <!-- Timeline -->
+        <div class="card p-4">
+          <div class="mb-3 flex flex-wrap items-center justify-between gap-2">
+            <span class="mono text-[10px] uppercase tracking-[0.18em] text-zinc-500">Score Timeline</span>
+            <div id="trackLegend" class="flex flex-wrap items-center gap-x-3 gap-y-1"></div>
+          </div>
+          <canvas id="timeline"
+            class="block h-40 w-full rounded-lg border border-zinc-800/60 bg-[#0a0a0c] md:h-44"></canvas>
+        </div>
+
+        <!-- Transport -->
+        <div class="card p-4">
+          <div class="mb-3 h-1 w-full overflow-hidden rounded-full bg-zinc-800">
+            <div id="progressBar"
+              class="h-full w-0 rounded-full bg-gradient-to-r from-indigo-500 to-violet-400 transition-[width] duration-100 ease-linear">
             </div>
-        </header>
-
-        <!-- ══════════ MAIN ══════════ -->
-        <main class="grid flex-1 grid-cols-1 gap-5 lg:grid-cols-12">
-
-            <!-- ───── LEFT: workspace ───── -->
-            <section class="flex flex-col gap-5 lg:col-span-7">
-
-                <!-- Dropzone -->
-                <div id="dropzone"
-                    class="card group flex cursor-pointer items-center gap-3 px-4 py-3 transition hover:border-zinc-600">
-                    <div
-                        class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-zinc-800/70 text-zinc-400 transition group-hover:text-indigo-400">
-                        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"
-                            viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                        </svg>
-                    </div>
-                    <div class="min-w-0 flex-1">
-                        <p class="text-[13px] font-medium text-zinc-200">Drop a
-                            <span class="mono text-indigo-400">.json</span> score here</p>
-                        <p class="truncate text-[11px] text-zinc-500">or click to browse — you can also paste and edit
-                            directly in the panel →</p>
-                    </div>
-                    <span class="mono hidden text-[10px] uppercase tracking-widest text-zinc-600 sm:inline">drag &amp; drop</span>
-                    <input type="file" id="fileInput" accept=".json,.txt,application/json,text/plain" class="hidden" />
-                </div>
-
-                <!-- Signal monitor -->
-                <div class="card p-4">
-                    <div class="mb-3 flex items-center justify-between">
-                        <span class="mono text-[10px] uppercase tracking-[0.18em] text-zinc-500">Signal Monitor</span>
-                        <span id="monitorInfo" class="mono text-[11px] text-zinc-500">idle</span>
-                    </div>
-                    <canvas id="scope"
-                        class="block h-36 w-full rounded-lg border border-zinc-800/60 bg-[#0a0a0c] md:h-40"></canvas>
-                </div>
-
-                <!-- Timeline -->
-                <div class="card p-4">
-                    <div class="mb-3 flex flex-wrap items-center justify-between gap-2">
-                        <span class="mono text-[10px] uppercase tracking-[0.18em] text-zinc-500">Score Timeline</span>
-                        <div id="trackLegend" class="flex flex-wrap items-center gap-x-3 gap-y-1"></div>
-                    </div>
-                    <canvas id="timeline"
-                        class="block h-40 w-full rounded-lg border border-zinc-800/60 bg-[#0a0a0c] md:h-44"></canvas>
-                </div>
-
-                <!-- Transport -->
-                <div class="card p-4">
-                    <div class="mb-3 h-1 w-full overflow-hidden rounded-full bg-zinc-800">
-                        <div id="progressBar"
-                            class="h-full w-0 rounded-full bg-gradient-to-r from-indigo-500 to-violet-400 transition-[width] duration-100 ease-linear">
-                        </div>
-                    </div>
-                    <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                        <div class="flex items-center gap-3">
-                            <button id="btnPlay" class="btn btn-primary px-5 py-2.5" disabled>
+          </div>
+          <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div class="flex items-center gap-3">
+              <button id="btnPlay" class="btn btn-primary px-5 py-2.5" disabled>
               <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
               <span>Play</span>
             </button>
-                            <button id="btnStop" class="btn px-3 py-2.5" disabled>
+              <button id="btnStop" class="btn px-3 py-2.5" disabled>
               <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h12v12H6z"/></svg>
             </button>
-                            <div class="mono ml-1 text-[11px] tabular-nums text-zinc-400">
-                                <span id="timeNow">0:00</span><span class="mx-1 text-zinc-600">/</span><span id="timeTotal">0:00</span>
-                            </div>
-                        </div>
+              <div class="mono ml-1 text-[11px] tabular-nums text-zinc-400">
+                <span id="timeNow">0:00</span><span class="mx-1 text-zinc-600">/</span><span id="timeTotal">0:00</span>
+              </div>
+            </div>
 
-                        <div class="flex items-center gap-5">
-                            <div class="mono text-[11px] text-zinc-500">
-                                <span id="bpmLabel" class="text-zinc-300">120</span> BPM</div>
-                            <div class="flex items-center gap-2">
-                                <svg width="14" height="14" class="text-zinc-500" fill="none" stroke="currentColor"
-                                    stroke-width="2" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
-                                </svg>
-                                <input type="range" id="volume" min="0" max="1" step="0.01" value="0.8" class="w-24 md:w-28" />
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div class="flex items-center gap-5">
+              <div class="mono text-[11px] text-zinc-500">
+                <span id="bpmLabel" class="text-zinc-300">120</span> BPM
+              </div>
+              <div class="flex items-center gap-2">
+                <svg width="14" height="14" class="text-zinc-500" fill="none" stroke="currentColor" stroke-width="2"
+                  viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+                </svg>
+                <input type="range" id="volume" min="0" max="1" step="0.01" value="0.8" class="w-24 md:w-28" />
+              </div>
+            </div>
+          </div>
+        </div>
 
-            </section>
+      </section>
 
-            <!-- ───── RIGHT: editor ───── -->
-            <section class="flex flex-col lg:col-span-5">
-                <div class="card flex min-h-[560px] flex-1 flex-col overflow-hidden">
+      <!-- ───── RIGHT: editor ───── -->
+      <section class="flex flex-col lg:col-span-5">
+        <div class="card flex min-h-[560px] flex-1 flex-col overflow-hidden">
 
-                    <div class="flex items-center justify-between border-b border-zinc-800/70 px-3 py-2">
-                        <div class="flex gap-1">
-                            <button class="tab active" data-tab="score">Score JSON</button>
-                            <button class="tab" data-tab="schema">Schema</button>
-                        </div>
-                        <span id="jsonStats" class="mono text-[10px] text-zinc-600">0 B</span>
-                    </div>
+          <div class="flex items-center justify-between border-b border-zinc-800/70 px-3 py-2">
+            <div class="flex gap-1">
+              <button class="tab active" data-tab="score">Score JSON</button>
+              <button class="tab" data-tab="schema">Schema</button>
+            </div>
+            <span id="jsonStats" class="mono text-[10px] text-zinc-600">0 B</span>
+          </div>
 
-                    <!-- Score tab -->
-                    <div id="tab-score" class="flex min-h-0 flex-1 flex-col">
-                        <textarea id="editor" spellcheck="false" autocomplete="off" autocapitalize="off" autocorrect="off"
+          <!-- Score tab -->
+          <div id="tab-score" class="flex min-h-0 flex-1 flex-col">
+            <textarea id="editor" spellcheck="false" autocomplete="off" autocapitalize="off" autocorrect="off"
             class="mono min-h-[340px] flex-1 resize-none bg-transparent p-4 text-[11.5px] leading-[1.65] text-zinc-300 outline-none placeholder:text-zinc-600"></textarea>
-                        <div id="errorBar"
-                            class="mono hidden border-t border-red-900/40 bg-red-950/25 px-4 py-2 text-[10.5px] leading-relaxed text-red-400">
-                        </div>
-                        <div class="flex items-center justify-between gap-2 border-t border-zinc-800/70 px-3 py-2.5">
-                            <div class="flex gap-1.5">
-                                <button id="btnFormat" class="btn btn-ghost">Format</button>
-                                <button id="btnClear" class="btn btn-ghost">Clear</button>
-                            </div>
-                            <button id="btnApply" class="btn btn-primary px-4">Apply &amp; Play</button>
-                        </div>
-                    </div>
+            <div id="errorBar"
+              class="mono hidden border-t border-red-900/40 bg-red-950/25 px-4 py-2 text-[10.5px] leading-relaxed text-red-400">
+            </div>
+            <div class="flex items-center justify-between gap-2 border-t border-zinc-800/70 px-3 py-2.5">
+              <div class="flex gap-1.5">
+                <button id="btnFormat" class="btn btn-ghost">Format</button>
+                <button id="btnClear" class="btn btn-ghost">Clear</button>
+              </div>
+              <button id="btnApply" class="btn btn-primary px-4">Apply &amp; Play</button>
+            </div>
+          </div>
 
-                    <!-- Schema tab -->
-                    <div id="tab-schema"
-                        class="hidden min-h-0 flex-1 overflow-auto p-4 text-[12px] leading-relaxed text-zinc-400"></div>
+          <!-- Schema tab -->
+          <div id="tab-schema"
+            class="hidden min-h-0 flex-1 overflow-auto p-4 text-[12px] leading-relaxed text-zinc-400"></div>
 
-                </div>
-            </section>
+        </div>
+      </section>
 
-        </main>
+    </main>
 
-        <!-- ══════════ FOOTER ══════════ -->
-        <footer
-            class="mt-6 flex flex-col items-center justify-between gap-2 border-t border-zinc-900 pt-4 text-[11px] text-zinc-600 md:flex-row">
-            <span>Built on the standard Web Audio API — no samples, no libraries, pure synthesis.</span>
-            <span class="flex items-center gap-3">
+    <!-- ══════════ FOOTER ══════════ -->
+    <footer
+      class="mt-6 flex flex-col items-center justify-between gap-2 border-t border-zinc-900 pt-4 text-[11px] text-zinc-600 md:flex-row">
+      <span>Built on the standard Web Audio API — no samples, no libraries, pure synthesis.</span>
+      <span class="flex items-center gap-3">
       <span><span class="kbd">Space</span> play / stop</span>
-            <span><span class="kbd">Esc</span> stop</span>
-            </span>
-        </footer>
-    </div>
+      <span><span class="kbd">Esc</span> stop</span>
+      </span>
+    </footer>
+  </div>
 
-    <script>
-        /* ============================================================================
-   AUDIO.JSON — ENGINE
-   ----------------------------------------------------------------------------
-   A declarative JSON score is normalized into an event list, then rendered by
-   building a Web Audio graph per note (sources → filter → amp → pan → buses).
-
-   Supported synthesis: subtractive, additive (partials), FM, noise, unison,
-   filter envelopes, ADSR amp envelopes, glide, per-track FX sends.
+  <script>
+    /* ============================================================================
+   AUDIO.JSON — ENGINE (optimized for large scores)
    ========================================================================== */
 
 /* ---------------------------------------------------------------- helpers */
@@ -457,7 +455,6 @@ function fxAmount(v, dflt) {
 function parseInstrument(tr) {
   const src = (tr.instrument && typeof tr.instrument === 'object') ? tr.instrument : tr;
 
-  /* --- oscillator --- */
   let oscRaw = src.osc ?? src.oscillator ?? {};
   let osc = (typeof oscRaw === 'string') ? { type: oscRaw } : { ...oscRaw };
   if (osc.type === undefined) osc.type = src.waveform ?? src.wave ?? 'sine';
@@ -467,12 +464,10 @@ function parseInstrument(tr) {
   osc.unison = clamp(Math.round(num(osc.unison ?? src.unison, 1)), 1, 7);
   osc.spread = clamp(num(osc.spread ?? src.spread, 0), 0, 100);
 
-  /* --- additive partials --- */
   const partials = Array.isArray(src.partials)
     ? src.partials.map(Number).filter((n) => isFinite(n)).slice(0, 64)
     : null;
 
-  /* --- noise --- */
   let noise = null;
   const noiseRaw = src.noise ?? (tr.type === 'noise' ? { type: 'white' } : null);
   if (typeof noiseRaw === 'string') noise = { type: noiseRaw.toLowerCase(), mix: 1 };
@@ -480,7 +475,6 @@ function parseInstrument(tr) {
     noise = { type: String(noiseRaw.type ?? 'white').toLowerCase(), mix: clamp(num(noiseRaw.mix ?? noiseRaw.level, 0.6), 0, 2) };
   }
 
-  /* --- FM --- */
   const fmRaw = src.fm ?? src.fmMod;
   const fm = fmRaw ? {
     ratio:   clamp(num(fmRaw.ratio, 2), 0.01, 24),
@@ -489,7 +483,6 @@ function parseInstrument(tr) {
     sustain: clamp(num(fmRaw.sustain, 0.03), 0, 1)
   } : null;
 
-  /* --- filter --- */
   const fRaw = (src.filter && typeof src.filter === 'object') ? src.filter : {};
   const filter = {
     type: String(
@@ -509,7 +502,6 @@ function parseInstrument(tr) {
     };
   }
 
-  /* --- amp envelope --- */
   const aRaw = src.amp ?? src.envelope ?? src.adsr ?? {};
   const amp = {
     attack:  Math.max(0.001, num(aRaw.attack ?? aRaw.a, 0.008)),
@@ -518,7 +510,6 @@ function parseInstrument(tr) {
     release: Math.max(0.01, num(aRaw.release ?? aRaw.r, 0.3))
   };
 
-  /* --- misc --- */
   return {
     osc, partials, noise, fm, filter, amp,
     gain:  clamp(num(src.gain ?? src.level ?? tr.gain, 0.7), 0, 4),
@@ -580,7 +571,6 @@ function normalizeScore(raw) {
 
     const repeat = clamp(Math.floor(num(tr.repeat ?? tr.loop, 1)), 1, 64);
 
-    /* --- build one pass of the track --- */
     const localEvents = [];
     let cursor = 0;
 
@@ -613,7 +603,6 @@ function normalizeScore(raw) {
       cursor = Math.max(cursor, time + dur);
       if (rest || !pitches.length) return;
 
-      /* swing: push off-beat 8th notes */
       let tSec = time * unitMul;
       if (swing > 0) {
         const eighth = time * 2;
@@ -637,7 +626,6 @@ function normalizeScore(raw) {
       });
     });
 
-    /* --- repeats --- */
     let span = num(tr.length ?? tr.bars ?? tr.loopLength, 0) * unitMul;
     if (!span) {
       let m = 0;
@@ -671,7 +659,6 @@ function normalizeScore(raw) {
     });
   });
 
-  /* --- sort by time for deterministic glide / rendering --- */
   events.sort((a, b) => a.time - b.time);
 
   return {
@@ -682,11 +669,11 @@ function normalizeScore(raw) {
 }
 
 /* ============================================================================
-   AUDIO CORE
+   AUDIO CORE (with voice management for large scores)
    ========================================================================== */
 let ctx = null;
 const nodes = {};
-const liveSources = [];
+let activeVoices = new Set(); // stores { nodes: [...], stopTime: number }
 const noiseCache = {};
 const waveCache = {};
 
@@ -696,6 +683,11 @@ let playStartCtxTime = 0;
 let stopTimer = null;
 let masterVolume = 0.8;
 let scoreGain = 0.85;
+
+/* ----- voice scheduling with lookahead to prevent CPU spikes ----- */
+let schedulerTimer = null;
+let nextEventIndex = 0;
+let scheduledEvents = [];
 
 function initAudio() {
   if (ctx) {
@@ -723,7 +715,6 @@ function initAudio() {
   limiter.connect(analyser);
   analyser.connect(ctx.destination);
 
-  /* reverb bus */
   const reverb = ctx.createConvolver();
   reverb.buffer = makeImpulse(2.6, 2.4);
   const reverbWet = ctx.createGain();
@@ -731,7 +722,6 @@ function initAudio() {
   reverb.connect(reverbWet);
   reverbWet.connect(master);
 
-  /* delay bus */
   const delay = ctx.createDelay(2.0);
   delay.delayTime.value = 0.34;
   const delayFb = ctx.createGain();
@@ -810,7 +800,6 @@ function makePeriodicWave(partials) {
   return w;
 }
 
-/* ------------------------------------------------------- master settings */
 let lastImpulseKey = '';
 function applyMasterSettings(m) {
   scoreGain = m.gain;
@@ -857,7 +846,10 @@ function buildTrackChain(track) {
   track.lastFreq = 0;
 }
 
-/* ------------------------------------------------------------ voice build */
+/* ------------------------------------------------------------ voice build
+   Returns an object with the voice nodes and its scheduled stop time,
+   so we can manage and dispose them properly.
+   ------------------------------------------------------------------------ */
 function scheduleVoice(track, ev, baseTime) {
   const inst = track.inst;
   const t0 = baseTime + ev.time;
@@ -867,15 +859,16 @@ function scheduleVoice(track, ev, baseTime) {
   const freq = ev.freq;
   const vel = clamp(ev.vel, 0, 2);
 
-  /* --- amp + pan --- */
+  const voiceNodes = [];
+
   const ampGain = ctx.createGain();
   ampGain.gain.value = 0.0001;
   const panner = ctx.createStereoPanner();
   panner.pan.value = clamp(ev.pan !== null && ev.pan !== undefined ? ev.pan : inst.pan, -1, 1);
   ampGain.connect(panner);
   panner.connect(track.input);
+  voiceNodes.push(ampGain, panner);
 
-  /* --- filter --- */
   let dest = ampGain;
   const f = inst.filter;
   if (f.type && f.type !== 'none') {
@@ -892,10 +885,10 @@ function scheduleVoice(track, ev, baseTime) {
       filterNode.frequency.exponentialRampToValueAtTime(susF, t0 + f.env.attack + f.env.decay);
     }
     filterNode.connect(ampGain);
+    voiceNodes.push(filterNode);
     dest = filterNode;
   }
 
-  /* --- tonal sources --- */
   const oscType = inst.osc.type;
   const hasTone = oscType !== 'none' || (inst.partials && inst.partials.length);
 
@@ -904,6 +897,7 @@ function scheduleVoice(track, ev, baseTime) {
     const uGain = ctx.createGain();
     uGain.gain.value = 1 / Math.sqrt(unison);
     uGain.connect(dest);
+    voiceNodes.push(uGain);
 
     const wave = (inst.partials && inst.partials.length) ? makePeriodicWave(inst.partials) : null;
     const carriers = [];
@@ -928,11 +922,10 @@ function scheduleVoice(track, ev, baseTime) {
       o.connect(uGain);
       o.start(t0);
       o.stop(end);
-      liveSources.push(o);
+      voiceNodes.push(o);
       carriers.push(o);
     }
 
-    /* FM modulator */
     if (inst.fm && inst.fm.index > 0) {
       const mod = ctx.createOscillator();
       mod.type = 'sine';
@@ -948,11 +941,10 @@ function scheduleVoice(track, ev, baseTime) {
 
       mod.start(t0);
       mod.stop(end);
-      liveSources.push(mod);
+      voiceNodes.push(mod, modGain);
     }
   }
 
-  /* --- noise source --- */
   if (inst.noise) {
     const ns = ctx.createBufferSource();
     ns.buffer = getNoiseBuffer(inst.noise.type);
@@ -963,10 +955,9 @@ function scheduleVoice(track, ev, baseTime) {
     ng.connect(dest);
     ns.start(t0);
     ns.stop(end);
-    liveSources.push(ns);
+    voiceNodes.push(ns, ng);
   }
 
-  /* --- amp envelope --- */
   const g = ampGain.gain;
   const a = inst.amp.attack;
   const d = inst.amp.decay;
@@ -990,9 +981,16 @@ function scheduleVoice(track, ev, baseTime) {
   g.exponentialRampToValueAtTime(0.0001, holdEnd + rel);
 
   track.lastFreq = freq;
+
+  return { nodes: voiceNodes, stopTime: end + 0.15 };
 }
 
-/* ------------------------------------------------------------- transport */
+/* ------------------------------------------------------------- transport
+   Uses a lookahead scheduler so we don't schedule thousands of events at once.
+   ------------------------------------------------------------------------ */
+const LOOKAHEAD_MS = 120;   // how far ahead we schedule (ms)
+const SCHEDULE_INTERVAL = 40; // how often we run the scheduler (ms)
+
 function startPlayback() {
   if (!score || !score.events.length) return;
   initAudio();
@@ -1004,26 +1002,62 @@ function startPlayback() {
   applyMasterSettings(score.master);
   score.tracks.forEach((tr) => { tr.lastFreq = 0; buildTrackChain(tr); });
 
-  score.events.forEach((ev) => {
-    const tr = score.tracks[ev.trackIndex];
-    if (tr) scheduleVoice(tr, ev, t0);
-  });
+  // Prepare sorted event list with track references
+  scheduledEvents = score.events.map((ev, i) => ({ ...ev, index: i }));
 
+  nextEventIndex = 0;
   isPlaying = true;
   updateTransportUI();
 
+  // Start the scheduler loop
+  schedulerTimer = setInterval(scheduleUpcoming, SCHEDULE_INTERVAL);
+  scheduleUpcoming(); // immediate first call
+
+  // Auto-stop after duration + tail
   stopTimer = setTimeout(() => stopPlayback(), (score.duration + 0.7) * 1000);
+}
+
+function scheduleUpcoming() {
+  if (!isPlaying || !ctx || !score) return;
+  const now = ctx.currentTime;
+  const scheduleUntil = now + LOOKAHEAD_MS / 1000;
+
+  while (nextEventIndex < scheduledEvents.length) {
+    const ev = scheduledEvents[nextEventIndex];
+    const eventTime = playStartCtxTime + ev.time;
+    if (eventTime > scheduleUntil) break;
+
+    const tr = score.tracks[ev.trackIndex];
+    if (tr) {
+      const voice = scheduleVoice(tr, ev, playStartCtxTime);
+      activeVoices.add(voice);
+    }
+    nextEventIndex++;
+  }
+
+  // Garbage collect finished voices (stopTime < now)
+  for (const v of activeVoices) {
+    if (v.stopTime < now) {
+      v.nodes.forEach(n => { try { n.disconnect(); } catch (e) {} });
+      activeVoices.delete(v);
+    }
+  }
 }
 
 function stopPlayback() {
   if (stopTimer) { clearTimeout(stopTimer); stopTimer = null; }
+  if (schedulerTimer) { clearInterval(schedulerTimer); schedulerTimer = null; }
 
-  for (let i = 0; i < liveSources.length; i++) {
-    const n = liveSources[i];
-    try { n.stop(); } catch (e) { /* already stopped */ }
-    try { n.disconnect(); } catch (e) { /* noop */ }
+  // Stop and disconnect all active voices
+  for (const v of activeVoices) {
+    v.nodes.forEach(n => {
+      try { if (n.stop) n.stop(); } catch (e) {}
+      try { n.disconnect(); } catch (e) {}
+    });
   }
-  liveSources.length = 0;
+  activeVoices.clear();
+  scheduledEvents = [];
+  nextEventIndex = 0;
 
   if (score) {
     score.tracks.forEach((tr) => {
@@ -1091,7 +1125,6 @@ function drawScope() {
   const { g, w, h } = fitCanvas(scopeCanvas);
   g.clearRect(0, 0, w, h);
 
-  /* grid */
   g.strokeStyle = 'rgba(63,63,70,0.22)';
   g.lineWidth = 1;
   g.beginPath();
@@ -1107,7 +1140,6 @@ function drawScope() {
     timeBytes = new Uint8Array(an.fftSize);
   }
 
-  /* spectrum bars */
   an.getByteFrequencyData(freqBytes);
   const bars = 72;
   const bw = w / bars;
@@ -1124,7 +1156,6 @@ function drawScope() {
     g.fillRect(i * bw + 0.5, h - bh, Math.max(1, bw - 1.5), bh);
   }
 
-  /* waveform */
   an.getByteTimeDomainData(timeBytes);
   g.strokeStyle = isPlaying ? '#a5b4fc' : '#3f3f46';
   g.lineWidth = 1.6;
@@ -1167,7 +1198,6 @@ function drawTimeline() {
   const xFor = (t) => (t / dur) * w;
   const yFor = (midi) => padTop + drawH * (1 - (midi - lo) / (hi - lo));
 
-  /* grid */
   g.strokeStyle = 'rgba(63,63,70,0.18)';
   g.lineWidth = 1;
   g.beginPath();
@@ -1185,10 +1215,12 @@ function drawTimeline() {
   }
   g.stroke();
 
-  /* note blocks */
+  // Draw notes — for very large scores we cull to visible area
   score.events.forEach((e) => {
     const x = xFor(e.time);
+    if (x > w + 20) return; // past right edge
     const bw = Math.max(2.5, xFor(e.time + e.dur) - x);
+    if (x + bw < -20) return; // before left edge
     const y = yFor(freqToMidi(e.freq));
     const track = score.tracks[e.trackIndex];
     const color = track ? track.color : '#818cf8';
@@ -1200,7 +1232,6 @@ function drawTimeline() {
     g.globalAlpha = 1;
   });
 
-  /* playhead */
   if (isPlaying && ctx) {
     const t = clamp(ctx.currentTime - playStartCtxTime, 0, dur);
     const x = xFor(t);
@@ -1272,7 +1303,6 @@ function setScore(s) {
   $('progressBar').style.width = '0%';
   $('monitorInfo').textContent = `${s.events.length} events · ${s.duration.toFixed(1)}s · ${s.tracks.length} tracks`;
 
-  /* legend */
   const legend = $('trackLegend');
   legend.innerHTML = '';
   s.tracks.forEach((tr) => {
@@ -1307,8 +1337,6 @@ function loadFromText(text, { quiet = false } = {}) {
   }
 }
 
-/* --- editor input --- */
-let debounceId = null;
 editor.addEventListener('input', () => {
   updateStats();
   clearTimeout(debounceId);
@@ -1360,6 +1388,27 @@ $('volume').addEventListener('input', (e) => {
   if (nodes.master && ctx) {
     nodes.master.gain.setTargetAtTime(clamp(masterVolume * scoreGain, 0, 3), ctx.currentTime, 0.02);
   }
+});
+
+/* --- export --- */
+$('btnExport').addEventListener('click', () => {
+  const jsonStr = editor.value;
+  try {
+    // validate JSON before download
+    JSON.parse(jsonStr);
+  } catch (err) {
+    showError('Cannot export invalid JSON: ' + err.message);
+    return;
+  }
+  const blob = new Blob([jsonStr], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = (score?.title?.replace(/[^a-z0-9]/gi, '_') || 'audio_score') + '.json';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
 });
 
 /* --- file handling --- */
@@ -1637,7 +1686,13 @@ updateStats();
 loadFromText(editor.value, { quiet: true });
 setStatus('ready', 'Ready');
 requestAnimationFrame(renderLoop);
-    </script>
+
+// Ensure cleanup on page unload
+window.addEventListener('beforeunload', () => {
+  if (schedulerTimer) clearInterval(schedulerTimer);
+  if (stopTimer) clearTimeout(stopTimer);
+});
+  </script>
 </body>
 
 </html>
